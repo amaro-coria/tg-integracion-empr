@@ -1,0 +1,210 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<!-- Pegar aqui nuestro contenido -->
+		<body>
+			<h:form>
+				<p:growl autoUpdate="true" />
+				<div class="col-lg-4">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h:outputText value="Acciones" />
+						</div>
+						<div class="panel-body">
+							<p:commandButton value="Detalle" icon="ui-icon-search"
+								update=":detailForm:detailPanel"
+								oncomplete="PF('detailDialog').show();" />
+							<p:commandButton value="Nuevo" icon="ui-icon-plus"
+								update=":nuevoForm:nuevoPanel datatable"
+								oncomplete="PF('nuevoDialog').show();" />
+							<p:commandButton value="Editar" icon="ui-icon-pencil"
+								update="datatable :editarForm:editarPanel" actionListener="#{clienteController.preUpdate}"
+								oncomplete="PF('editarDialog').show();" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h:outputText value="Clientes del sistema" />
+							<f:selectItems />
+						</div>
+						<div class="panel-body">
+							<p:dataTable value="#{clienteController.itemsList}" var="item"
+								selectionMode="single" id="datatable"
+								selection="#{clienteController.selectedItem}"
+								rowKey="#{item.idCte}">
+								<p:column headerText="NOMBRE">
+									<h:outputText value="#{item.nomCte}" />
+								</p:column>
+								<p:column headerText="Apellido P">
+									<h:outputText value="#{item.apePatCte}" />
+								</p:column>
+								<p:column headerText="Telefono">
+									<h:outputText value="#{item.telCte}" />
+								</p:column>
+							</p:dataTable>
+						</div>
+					</div>
+				</div>
+
+
+			</h:form>
+
+			<p:dialog modal="true" id="editarDialog" widgetVar="editarDialog">
+				<h:form id="editarForm">
+					<p:outputPanel id="editarPanel">
+						<h:panelGrid columns="3">
+							<p:outputLabel value="Nombre" for="edit_dsc_corta" />
+							<p:inputText value="#{clienteController.currentEditNombre}"
+								id="edit_dsc_corta" />
+							<p:watermark value="#{clienteController.selectedItem.nomCte}"
+								for="edit_dsc_corta" />
+							<p:outputLabel value="Apellido Paterno" for="edit_desc_completa" />
+							<p:inputText value="#{clienteController.currentEditApellidoP}"
+								id="edit_desc_completa" />
+							<p:watermark value="#{clienteController.selectedItem.apePatCte}"
+								for="edit_desc_completa" />
+							<p:outputLabel value="Apellido Materno" for="edit_desc_fecha" />
+							<p:inputText value="#{clienteController.currentEditApellidoM}"
+								id="edit_desc_fecha" />
+							<p:watermark value="#{clienteController.selectedItem.apeMatCte}"
+								for="edit_desc_fecha" />
+							<p:outputLabel value="Telefono" for="edit_tel_estatus" />
+							<p:inputText value="#{clienteController.currentEditTelefono}"
+								id="edit_tel_estatus" />
+							<p:watermark value="#{clienteController.selectedItem.telCte}"
+								for="edit_tel_estatus" />
+							<p:outputLabel value="Direccion" for="edit_direccion" />
+							<p:inputTextarea
+								value="#{clienteController.currentEditDireccion}"
+								id="edit_direccion" />
+							<p:watermark value="#{clienteController.selectedItem.dirCte}"
+								for="edit_direccion" />
+
+							<p:outputLabel for="edit_option_tipo" value="Tipo-Estatus" />
+							<p:selectOneMenu value="#{clienteController.selectedValue}"
+								required="true" id="edit_option_tipo">
+								<f:selectItem itemLabel="Selecciona un valor" itemValue="0"
+									noSelectionOption="true" />
+								<f:selectItems value="#{clienteController.optionsList}"
+									var="item" itemLabel="#{item.dscComCat}"
+									itemValue="#{item.idCat}" />
+							</p:selectOneMenu>
+							<p:tooltip for="edit_option_tipo" 
+							value="Valor actual: #{clienteController.findDescCatalogo()}" />
+
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Aceptar" icon="ui-icon-check"
+								action="#{clienteController.onUpdate}"
+								oncomplete="PF('editarDialog').hide();" />
+							<p:commandButton value="Cancelar" icon="ui-icon-close"
+								action="#{clienteController.onCancel}" immediate="true"
+								oncomplete="PF('editarDialog').hide();" />
+						</h:panelGrid>
+					</p:outputPanel>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog modal="true" id="nuevoDialog" widgetVar="nuevoDialog">
+				<h:form id="nuevoForm">
+					<p:outputPanel id="nuevoPanel">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Nombre" for="new_dsc_corta" />
+							<p:inputText value="#{clienteController.nuevoItem.nomCte}"
+								required="true" id="new_dsc_corta" />
+							<p:outputLabel value="Apellido Paterno" for="new_desc_completa" />
+							<p:inputText value="#{clienteController.nuevoItem.apePatCte}"
+								required="true" id="new_desc_completa" />
+							<p:outputLabel value="Apellido Materno" for="new_desc_fecha" />
+							<p:inputText value="#{clienteController.nuevoItem.apeMatCte}"
+								id="new_desc_fecha" />
+							<p:outputLabel value="Telefono" for="new_tel_estatus" />
+							<p:inputText value="#{clienteController.nuevoItem.telCte}"
+								required="true" id="new_tel_estatus" />
+							<p:outputLabel value="Direccion" for="new_direccion" />
+							<p:inputTextarea value="#{clienteController.nuevoItem.dirCte}"
+								required="true" id="new_direccion" />
+							<p:outputLabel for="new_option_tipo" value="Tipo-Estatus" />
+							<p:selectOneMenu value="#{clienteController.selectedValue}"
+								required="true" id="new_option_tipo">
+								<f:selectItem itemLabel="Selecciona un valor" itemValue="0"
+									noSelectionOption="true" />
+								<f:selectItems value="#{clienteController.optionsList}"
+									var="item" itemLabel="#{item.dscComCat}"
+									itemValue="#{item.idCat}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Aceptar" icon="ui-icon-check"
+								action="#{clienteController.onSave}"
+								oncomplete="PF('nuevoDialog').hide();" />
+							<p:commandButton value="Cancelar" icon="ui-icon-close"
+								action="#{clienteController.onCancel}" immediate="true"
+								oncomplete="PF('nuevoDialog').hide();" />
+						</h:panelGrid>
+					</p:outputPanel>
+				</h:form>
+			</p:dialog>
+
+
+			<p:dialog modal="true" id="detailDialog" widgetVar="detailDialog">
+				<h:form id="detailForm">
+					<!--  Detalle del elemento seleccionado -->
+					<h:panelGrid columns="2" id="detailPanel">
+						<p:outputLabel value="Id" for="detalle_id" />
+						<h:outputText id="detalle_id"
+							value="#{clienteController.selectedItem.idCte}" />
+						<p:outputLabel value="Nombre" for="destalle_dsc_corta" />
+						<h:outputText value="#{clienteController.selectedItem.nomCte}"
+							id="destalle_dsc_corta" />
+						<p:outputLabel value="Apellido Paterno"
+							for="detalle_desc_completa" />
+						<h:outputText value="#{clienteController.selectedItem.apePatCte}"
+							id="detalle_desc_completa" />
+						<p:outputLabel value="Apellido Materno" for="detalle_desc_fecha" />
+						<h:outputText value="#{clienteController.selectedItem.apeMatCte}"
+							id="detalle_desc_fecha" />
+						<p:outputLabel value="Telefono" for="detalle_estatus" />
+						<h:outputText value="#{clienteController.selectedItem.telCte}"
+							id="detalle_estatus" />
+						<p:outputLabel value="Direccion" for="detalle_direccion" />
+						<h:outputText value="#{clienteController.selectedItem.dirCte}"
+							id="detalle_direccion" />
+						<p:outputLabel value="Estatus" for="detalle_estatus_cte" />
+						<h:outputText value="#{clienteController.currentEstatusDsc}"
+							id="detalle_estatus_cte" />
+					</h:panelGrid>
+					<!-- Acciones -->
+					<h:panelGrid columns="1">
+						<p:commandButton value="Aceptar" icon="ui-icon-check"
+							onclick="PF('detailDialog').hide();" />
+					</h:panelGrid>
+				</h:form>
+			</p:dialog>
+
+		</body>
+
+
+
+
+	</ui:define>
+</ui:composition>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+

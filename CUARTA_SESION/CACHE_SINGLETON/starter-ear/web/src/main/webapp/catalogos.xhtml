@@ -1,0 +1,143 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<!-- Pegar aqui nuestro contenido -->
+		<body>
+			<h:form>
+				<p:growl autoUpdate="true" />
+				<p:panel header="Acciones">
+					<p:commandButton value="Detalle" icon="ui-icon-search"
+						update=":detailForm:detailPanel"
+						oncomplete="PF('detailDialog').show();" />
+					<p:commandButton value="Nuevo" icon="ui-icon-plus"
+						update=":nuevoForm:nuevoPanel datatable"
+						oncomplete="PF('nuevoDialog').show();" />
+					<p:commandButton value="Editar" icon="ui-icon-pencil" 
+						update="datatable :editarForm:editarPanel" oncomplete="PF('editarDialog').show();" />
+				</p:panel>
+
+				<p:panel header="#{msg.title_catalogo}">
+					<p:dataTable value="#{catalogoController.itemsList}" var="item"
+						selectionMode="single" id="datatable"
+						selection="#{catalogoController.selectedItem}"
+						rowKey="#{item.idCat}">
+						<p:column headerText="DESC">
+							<h:outputText value="#{item.dscCorCat}" />
+						</p:column>
+						<p:column headerText="DESC COMPLETA">
+							<h:outputText value="#{item.dscComCat}" />
+						</p:column>
+						<p:column headerText="FECHA CREACION">
+							<h:outputText value="#{item.fchCre}" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+			
+			<p:dialog modal="true" id="editarDialog" widgetVar="editarDialog">
+				<h:form id="editarForm">
+					<p:outputPanel id="editarPanel">
+						<h:panelGrid columns="3">
+							<p:outputLabel value="Desc Corta" for="input_update_desc_cort" />
+							<p:inputText id="input_update_desc_cort"
+								value="#{catalogoController.descCortaEdit}">
+							</p:inputText>
+							<p:watermark value="#{catalogoController.selectedItem.dscCorCat}" 
+										for="input_update_desc_cort" />
+										
+							<p:outputLabel value="Desc Completa" for="input_update_desc_completa" />
+							<p:inputText id="input_update_desc_completa"
+								value="#{catalogoController.descCompletaEdit}" />
+							<p:watermark value="#{catalogoController.selectedItem.dscComCat}" 
+								for="input_update_desc_completa" />								
+								
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Aceptar" icon="ui-icon-check"
+								action="#{catalogoController.onUpdate}"
+								oncomplete="PF('editarDialog').hide();" />
+							<p:commandButton value="Cancelar" icon="ui-icon-close"
+								action="#{catalogoController.onCancel}" immediate="true"
+								oncomplete="PF('editarDialog').hide();" />
+						</h:panelGrid>
+					</p:outputPanel>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog modal="true" id="nuevoDialog" widgetVar="nuevoDialog">
+				<h:form id="nuevoForm">
+					<p:outputPanel id="nuevoPanel">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Desc Corta" for="input_desc_cort" />
+							<p:inputText id="input_desc_cort"
+								value="#{catalogoController.nuevoItem.dscCorCat}"
+								required="true" />
+							<p:outputLabel value="Desc Completa" for="input_desc_completa" />
+							<p:inputText id="input_desc_completa"
+								value="#{catalogoController.nuevoItem.dscComCat}" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Aceptar" icon="ui-icon-check"
+								action="#{catalogoController.onSave}"
+								oncomplete="PF('nuevoDialog').hide();" />
+							<p:commandButton value="Cancelar" icon="ui-icon-close"
+								action="#{catalogoController.onCancel}" immediate="true"
+								oncomplete="PF('nuevoDialog').hide();" />
+						</h:panelGrid>
+					</p:outputPanel>
+				</h:form>
+			</p:dialog>
+
+
+			<p:dialog modal="true" id="detailDialog" widgetVar="detailDialog">
+				<h:form id="detailForm">
+					<!--  Detalle del elemento seleccionado -->
+					<h:panelGrid columns="2" id="detailPanel">
+						<p:outputLabel value="Id" for="detalle_id" />
+						<h:outputText id="detalle_id"
+							value="#{catalogoController.selectedItem.idCat}" />
+						<p:outputLabel value="Desc Corta" for="destalle_dsc_corta" />
+						<h:outputText value="#{catalogoController.selectedItem.dscCorCat}"
+							id="destalle_dsc_corta" />
+						<p:outputLabel value="Desc Completa" for="detalle_desc_completa" />
+						<h:outputText value="#{catalogoController.selectedItem.dscComCat}"
+							id="detalle_desc_completa" />
+						<p:outputLabel value="Fecha creacion" for="detalle_desc_fecha" />
+						<h:outputText value="#{catalogoController.selectedItem.fchCre}"
+							id="detalle_desc_fecha" />
+						<p:outputLabel value="Estatus" for="detalle_estatus" />
+						<h:outputText value="#{catalogoController.selectedItem.idEstCat}"
+							id="detalle_estatus" />
+					</h:panelGrid>
+					<!-- Acciones -->
+					<h:panelGrid columns="1">
+						<p:commandButton value="Aceptar" icon="ui-icon-check"
+							onclick="PF('detailDialog').hide();" />
+					</h:panelGrid>
+				</h:form>
+			</p:dialog>
+
+		</body>
+
+
+
+
+	</ui:define>
+</ui:composition>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
